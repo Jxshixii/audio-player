@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .audio-wrapper {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-left: 20px solid white;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 5px;
+        }
+
+        .pause-icon {
+            display: none;
+            width: 20px;
+            height: 24px;
+            position: relative;
+        }
+
+        .pause-icon::before,
+        .pause-icon::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 24px;
+            background: white;
+        }
+
+        .pause-icon::before {
+            left: 0;
+        }
+
+        .pause-icon::after {
+            right: 0;
+        }
+
+        .play-button.playing .play-icon {
+            display: none;
+        }
+
+        .play-button.playing .pause-icon {
+            display: block;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+            outline: none;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background: white;
+        }
+
+        .info {
+            color: #888;
+            font-size: 12px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .status {
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Audio Player</h1>
+        <p class="subtitle">Deine Audiodatei ist bereit zum Abspielen</p>
+        
+        <div class="audio-wrapper">
+            <button class="play-button" id="playBtn">
+                <div class="play-icon"></div>
+                <div class="pause-icon"></div>
+            </button>
+            
+            <audio id="audioPlayer" controls>
+                <source src="track17.wav" type="audio/wav">
+                <source src="track17.mp3" type="audio/mpeg">
+                Dein Browser unterstützt das Audio-Element nicht.
+            </audio>
+            
+            <div class="status" id="status"></div>
+        </div>
+        
+        <div class="info">
+            ℹ️ Einfach auf Play drücken oder die Steuerelemente nutzen
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playBtn');
+        const status = document.getElementById('status');
+
+        // Play/Pause Button
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        });
+
+        // Update button state
+        audio.addEventListener('play', () => {
+            playBtn.classList.add('playing');
+            status.textContent = 'Wird abgespielt...';
+        });
+
+        audio.addEventListener('pause', () => {
+            playBtn.classList.remove('playing');
+            status.textContent = 'Pausiert';
+        });
+
+        audio.addEventListener('ended', () => {
+            playBtn.classList.remove('playing');
+            status.textContent = 'Beendet';
+        });
+
+        audio.addEventListener('loadstart', () => {
+            status.textContent = 'Lädt...';
+        });
+
+        audio.addEventListener('canplay', () => {
+            if (audio.paused) {
+                status.textContent = 'Bereit zum Abspielen';
+            }
+        });
+
+        audio.addEventListener('error', () => {
+            status.textContent = 'Fehler beim Laden der Datei';
+        });
+    </script>
+</body>
+</html>
